@@ -1,0 +1,393 @@
+PARSER_BEGIN(html)
+package HTML;
+
+/**
+ * Simple brace matcher.
+ */
+public class html
+{
+  /** Main entry point. */
+  public static void main(String args []) throws ParseException
+  {
+    /*html parser = new html(System.in);
+    parser.Input();*/
+
+  }
+}
+
+PARSER_END(html)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+}
+
+TOKEN :
+{
+  < WORD : "ADD" >
+| < img : "IMAGE WITH SOURCE" >
+| < quote : "\"" >
+| < link : "WITH LINK" >
+| 
+  < header : "HEADING" >
+| < para : "PARAGRAPH" >
+| < url : "LINK" >
+| 
+  < text : "WITH TEXT" >
+| < color : "WITH COLOR" >
+| < font : "WITH FONT" >
+| < and : "AND" >
+| 
+  < alphanumeric :
+    ([ "a"-"z" ])+
+  | ([ "0"-"9" ])+
+  | (".")+
+  | (":")+
+  | (".")+
+  | ("/")+ >
+| 
+  < epslon : ~[ ] >
+}
+
+String [ ] words() :
+{
+  String s = "";
+}
+{
+  < WORD > s = matchedImag() < EOF >
+  {
+    System.out.println("parsed correctly " + s);
+    s = s.replaceAll("  ", " ");
+    s = s.replaceAll("   ", " ");
+    if (s.contains("IMAGE"))
+    { //ADD  WITH  "https://www.w3schools.com/html/pic_trulli.jpg"
+      String IMG = s.replace("IMAGE WITH SOURCE \" ", "<img src=\"");
+      IMG = IMG.replace(" \"", "\" />");
+      s = IMG;
+    }
+    else if (s.contains("HEADING"))
+    {
+      String W = s;
+      if (s.contains("FONT") && s.contains("COLOR"))
+      {
+        if (s.indexOf("COLOR") < s.indexOf("FONT"))
+        {
+          String [ ] WWW = W.split("WITH FONT \"");	
+          W = s.replace("HEADING WITH TEXT \"", "<h1>");
+          String [ ] WW = W.split("WITH COLOR \"");
+          W = W.replace("WITH COLOR \"", "");
+          W = W.replace("AND " + WW [ 1 ], "");
+          W = W.replace(">", " style=\"color:" + WW [ 1 ]);
+          W = W.replace("WITH FONT \"", ";font-family:");
+          WW [ 0 ] = WWW [ 1 ].replace("\"", ";\">");
+          W = W.replace(WWW [ 1 ], WW [ 0 ]);
+          W = W.replace(" \" AND ", "");
+          W = W.replace(" \" ", "</h1>");
+        }
+        else
+        {
+          String [ ] WWW = W.split("WITH COLOR \"");	
+          W = s.replace("HEADING WITH TEXT \"", "<h1>");
+          String [ ] WW = W.split("WITH FONT \"");
+          W = W.replace("WITH FONT \"", "");
+          W = W.replace("AND " + WW [ 1 ], "");
+          W = W.replace(">", " style=\"font-family:" + WW [ 1 ]);
+          W = W.replace("WITH COLOR \"", ";color:");
+          WW [ 0 ] = WWW [ 1 ].replace("\"", ";\">");
+          W = W.replace(WWW [ 1 ], WW [ 0 ]);
+          W = W.replace(" \" AND ", "");
+          W = W.replace(" \" ", "</h1>");
+        }
+      }
+      else if (s.contains("FONT"))
+      {
+        W = s.replace("HEADING WITH TEXT \"", "<h1>");
+        String [ ] WW = W.split("WITH FONT \"");
+        W = W.replace("WITH FONT \"", "");
+        W = W.replace("AND " + WW [ 1 ], "");
+        WW [ 1 ] = WW [ 1 ].replace("\"", ";\">");
+        W = W.replace(">", " style=\"font-family:" + WW [ 1 ]);
+        W = W.replace(" \"", "</h1>");
+      }
+      else if (s.contains("COLOR"))
+      {
+        W = s.replace("HEADING WITH TEXT \"", "<h1>");
+        String [ ] WW = W.split("WITH COLOR \"");
+        W = W.replace("WITH COLOR \"", "");
+        W = W.replace("AND " + WW [ 1 ], "");	
+        WW [ 1 ] = WW [ 1 ].replace("\"", ";\">");
+        W = W.replace(">", " style=\"color:" + WW [ 1 ]);
+        W = W.replace(" \"", "</h1>");
+      }
+      else
+      {
+        W = s.replace("HEADING WITH TEXT \"", "<h1>");
+        W = W.replace("\"", "</h1>");
+      }
+      s = W;
+    }
+    else if (s.contains("PARAGRAPH"))
+    {
+      String W = s;
+      if (s.contains("FONT") && s.contains("COLOR"))
+      {
+        if (s.indexOf("COLOR") < s.indexOf("FONT"))
+        {
+          String [ ] WWW = W.split("WITH FONT \"");	
+          W = s.replace("PARAGRAPH WITH TEXT \"", "<p>");
+          String [ ] WW = W.split("WITH COLOR \"");
+          W = W.replace("WITH COLOR \"", "");
+          W = W.replace("AND " + WW [ 1 ], "");
+          W = W.replace(">", " style=\"color:" + WW [ 1 ]);
+          W = W.replace("WITH FONT \"", ";font-family:");
+          WW [ 0 ] = WWW [ 1 ].replace("\"", ";\">");
+          W = W.replace(WWW [ 1 ], WW [ 0 ]);
+          W = W.replace(" \" AND ", "");
+          W = W.replace(" \" ", "</p>");
+        }
+        else
+        {
+          String [ ] WWW = W.split("WITH COLOR \"");	
+          W = s.replace("PARAGRAPH WITH TEXT \"", "<p>");
+          String [ ] WW = W.split("WITH FONT \"");
+          W = W.replace("WITH FONT \"", "");
+          W = W.replace("AND " + WW [ 1 ], "");
+          W = W.replace(">", " style=\"font-family:" + WW [ 1 ]);
+          W = W.replace("WITH COLOR \"", ";color:");
+          WW [ 0 ] = WWW [ 1 ].replace("\"", ";\">");
+          W = W.replace(WWW [ 1 ], WW [ 0 ]);
+          W = W.replace(" \" AND ", "");
+          W = W.replace(" \" ", "</p>");
+        }
+      }
+      else if (s.contains("FONT"))
+      {
+        W = s.replace("PARAGRAPH WITH TEXT \"", "<p>");
+        String [ ] WW = W.split("WITH FONT \"");
+        W = W.replace("WITH FONT \"", "");
+        W = W.replace("AND " + WW [ 1 ], "");
+        WW [ 1 ] = WW [ 1 ].replace("\"", ";\">");
+        W = W.replace(">", " style=\"font-family:" + WW [ 1 ]);
+        W = W.replace(" \"", "</p>");
+      }
+      else if (s.contains("COLOR"))
+      {
+        W = s.replace("PARAGRAPH WITH TEXT \"", "<p>");
+        String [ ] WW = W.split("WITH COLOR \"");
+        W = W.replace("WITH COLOR \"", "");
+        W = W.replace("AND " + WW [ 1 ], "");	
+        WW [ 1 ] = WW [ 1 ].replace("\"", ";\">");
+        W = W.replace(">", " style=\"color:" + WW [ 1 ]);
+        W = W.replace(" \"", "</p>");
+      }
+      else
+      {
+        W = s.replace("PARAGRAPH WITH TEXT \"", "<p>");
+        W = W.replace("\"", "</p>");
+      }
+      s = W;
+    }
+    else if (s.contains("LINK"))
+    {
+      String [ ] Li = s.split("AND WITH LINK");
+      Li [ 1 ] = Li [ 1 ].replace(" \" h", "<a href=\"h");
+      if (Li [ 1 ].contains("WITH COLOR") && Li [ 1 ].contains("WITH FONT"))
+      {
+        if (Li [ 1 ].indexOf("COLOR") < Li [ 1 ].indexOf("FONT"))
+        {
+          Li [ 1 ] = Li [ 1 ].replace("WITH COLOR \"", "style=\"color:");
+          Li [ 1 ] = Li [ 1 ].replace("WITH FONT \"", ";font-family:");
+        }
+        else
+        {		
+          Li [ 1 ] = Li [ 1 ].replace("WITH COLOR \"", ";color:");
+          Li [ 1 ] = Li [ 1 ].replace("WITH FONT \"", "style=\"font-family:");
+        }
+        Li [ 1 ] = Li [ 1 ].replace("\" ;", ";");
+      }
+      else if (Li [ 1 ].contains("WITH COLOR"))
+      { 
+        Li [ 1 ] = Li [ 1 ].replace("WITH COLOR \"", "style=\"color:");
+      }
+      else if (Li [ 1 ].contains("WITH FONT"))
+      {
+        Li [ 1 ] = Li [ 1 ].replace("WITH FONT \"", "style=\"font-family:");
+      }
+      Li [ 0 ] = Li [ 0 ].replace("LINK WITH TEXT \"", ">");
+      Li [ 0 ] = Li [ 0 ].replace("\"", "</a>");
+      String Final = Li [ 1 ] + Li [ 0 ];
+      Final = Final.replaceAll("\" AND", "");
+      Final = Final.replaceAll("  ", " ");
+      s = Final;
+    }
+    System.out.println("In HTML: " + s);
+    s = s.replaceAll("  ", " ");
+    s = s.replaceAll("AND", " ");
+    String [ ] ret = new String [ 2 ];
+    ret [ 0 ] = "parsed correctly";
+    ret [ 1 ] = s;
+    return ret;
+  }
+}
+
+String matchedImag() :
+{
+  Token t1 = null;
+  Token t2 = null;
+  Token t3 = null;
+  Token t4 = null;
+  String s1 = "";
+}
+{
+  (
+    t1 = < img > t2 = < quote > s1 = matchSentence() t3 = < quote >
+  | t1 = < header > s1 = matchDecorated()
+  | t1 = < para > s1 = matchDecorated()
+  | t1 = < url > s1 = matchURL()
+  )
+  {
+    if (t3 != null)
+    {
+      return t1.toString() + " " + t2.toString() + " " + s1 + " " + t3.toString();
+    }
+    else
+    {
+      return t1.toString() + " " + s1;
+    }
+  }
+}
+
+String matchDecorated() :
+{
+  Token t2 = null;
+  String s2 = "";
+  String s3 = "";
+}
+{
+  (
+    s2 = matchText()
+  | s2 = matchColor()
+  | s2 = matchFont()
+  )
+  [ t2 = < and > ] [ s3 = matchDecorated() ]
+  {
+    if (t2 != null)
+    {
+      return s2 + " " + t2.toString() + " " + s3;
+    }
+    else
+    {
+      return s2 + " " + s3;
+    }
+  }
+}
+
+String matchURL() :
+{
+  String s = "";
+  String s2 = "";
+  String s3 = "";
+  String s4 = "";
+  Token t = null;
+  Token t1 = null;
+  Token t2 = null;
+  Token t3 = null;
+  Token t4 = null;
+}
+{
+  (
+    s = matchText()
+  | s = matchColor()
+  | s = matchFont()
+  |
+    (
+      t = < link > t1 = < quote > s3 = matchSentence() t2 = < quote >
+    )
+  )
+  [ t3 = < and > ] [ s4 = matchURL() ]
+  {
+    if (t1 != null)
+    {
+      if (t3 != null)
+      {
+        return s + t.toString() + " " + t1.toString() + " " + s3 + " " + t2.toString() + " " + t3.toString() + " " + s4;
+      }
+      else
+      {
+        return s + " " + t.toString() + " " + t1.toString() + " " + s3 + " " + t2.toString() + " " + s4;
+      }
+    }
+    else
+    {
+      if (t3 != null)
+      {
+        return s + " " + t3.toString() + " " + s4;
+      }
+      else 
+      return s + " " + s4;
+    }
+  }
+}
+
+String matchText() :
+{
+  Token t = null;
+  Token t1 = null;
+  Token t2 = null;
+  String s = "";
+}
+{
+  t = < text > t1 = < quote > s = matchSentence() t2 = < quote >
+  {
+    return t.toString() + " " + t1.toString() + " " + s + " " + t2.toString();
+  }
+}
+
+String matchColor() :
+{
+  Token t = null;
+  Token t1 = null;
+  Token t2 = null;
+  String s = "";
+}
+{
+  t = < color > t1 = < quote > s = matchSentence() t2 = < quote >
+  {
+    return t.toString() + " " + t1.toString() + " " + s + " " + t2.toString();
+  }
+}
+
+String matchFont() :
+{
+  Token t = null;
+  Token t1 = null;
+  Token t2 = null;
+  String s = "";
+}
+{
+  t = < font > t1 = < quote > s = matchSentence() t2 = < quote >
+  {
+    return t.toString() + " " + t1.toString() + " " + s + " " + t2.toString();
+  }
+}
+
+String matchSentence() :
+{
+  Token t = null;
+  Token t1 = null;
+  Token t2 = null;
+  String s = "";
+}
+{
+  (
+    t = < alphanumeric >
+  | t = < epslon >
+  )
+  [ s = matchSentence() ]
+  {
+    return t.toString() + s;
+  }
+}
