@@ -1,4 +1,4 @@
-# Descriptive-HTML
+# Descriptive-HTML  Group of 3 (mohamed Elgreatly -- mahmoud fathalla -- mahmoud ramzy)
 make small compiler to html code
 Example
 People with no technical background may find learning HTML a difficult thing, so you will make
